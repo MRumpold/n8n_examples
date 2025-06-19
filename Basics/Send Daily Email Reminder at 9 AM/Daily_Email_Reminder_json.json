@@ -1,0 +1,165 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        260
+      ],
+      "id": "15c2d3b6-60e4-491b-b468-41265c7ec025",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4f77b00-286f-41d9-bf23-da66fc93a5d7",
+              "name": "emailTo",
+              "value": "you_to@yourdomain.at",
+              "type": "string"
+            },
+            {
+              "id": "4290ce1b-7add-4dfd-8c7f-b3e87c3c6644",
+              "name": "subject",
+              "value": "Daily Reminder",
+              "type": "string"
+            },
+            {
+              "id": "029eedc1-909a-42f6-8869-6694c3e54434",
+              "name": "body",
+              "value": "Good morning! This is your daily reminder from n8n. 🚀",
+              "type": "string"
+            },
+            {
+              "id": "3f5de321-6189-4519-8237-95b9c3aee0c8",
+              "name": "emailFrom",
+              "value": "you_from@yourdomain.at",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        260
+      ],
+      "id": "496b0020-d0f4-4ec5-b5c7-081564a886b1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $json.emailFrom }}",
+        "toEmail": "={{ $json.emailTo }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        60,
+        260
+      ],
+      "id": "fc008067-7b03-422d-a0fa-5811a6110947",
+      "name": "Send Email",
+      "webhookId": "873b3e22-35f7-4fa0-a32c-fae582cdcc9c",
+      "credentials": {
+        "smtp": {
+          "id": "8BTdXq3Cr1gujJDi",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Trigger at 9am\nStarts the workflow daily at 9:00.\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        80
+      ],
+      "id": "b7745fe9-7556-490f-8c3b-74e97d3ca16d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Create object\nCreates the object with the data required to send the mail \n(From and to address must be adapted) \n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/#fields-to-set/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        420
+      ],
+      "id": "2f8993fd-02b1-4617-862b-a480caf8b278",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Send mail \nConnect to the mail server and send mail.\n\nHere you have to create your server credentials (if you have not already done so) and enter them.\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.sendemail/)",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "467addd6-6d74-4564-b573-3f1762591274",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "",
+  "meta": {
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "tags": []
+}
