@@ -1,0 +1,132 @@
+{
+  "name": "Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hello-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "47948b6b-7057-4fde-9c1a-ac04e74feda5",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "simple-webhook-example"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "=Hello {{ $json.body.name }}! Your message was received."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2d22c170-aac6-4ff0-9fe3-db2b38c363d5",
+      "name": "Set Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "620bddfb-f395-4fa5-9612-f61905b50e92",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Trigger \nListens for incoming connections and forwards the data\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -180
+      ],
+      "id": "4f760faa-ee6f-4389-9931-aead0cb01599",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Send Reply \nSends the answer back\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -180
+      ],
+      "id": "ebd083c9-b5ac-4ed8-a509-d6d5e8199726",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Note:\nIf you switch the workflow from test to productive mode, the webhook URL changes.\n(The respective URL is stated in the trigger node)\n\nWindows Power Shell Test:\ncurl -X POST http://localhost:5678/webhook-test/hello-webhook -H \"Content-Type: application/json\" -d '{\\\"name\\\": \\\"Michael\\\"}'",
+        "height": 220,
+        "width": 680
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "c7cf1df7-d3e3-4138-bfa5-72c347386b58",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c866362d-4b84-4193-9f50-6606c4034434",
+  "meta": {
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "F1FmsqIjV8trAohf",
+  "tags": []
+}
