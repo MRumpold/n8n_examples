@@ -120,7 +120,7 @@
           "string": [
             {
               "name": "message",
-              "value": "=The current temperature in Vienna is {{ $json.current_weather.temperature }}°C with windspeed {{ $json.current_weather.windspeed }} km/h."
+              "value": "=The current temperature in {{ $('Get Coordinates').item.json.display_name }} is {{ $json.current_weather.temperature }}°C with windspeed {{ $json.current_weather.windspeed }} km/h."
             }
           ]
         },
@@ -235,7 +235,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "2bdad1d4-1ad8-49f8-a08f-d234ed892113",
+  "versionId": "dea46483-c311-4c44-85a8-29fb34416939",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
