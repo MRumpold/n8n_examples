@@ -1,0 +1,134 @@
+{
+  "name": "Weather API 1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fc7ed89c-1d3f-4c92-b4b2-8efdaed86ead",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=48.208&longitude=16.373&current_weather=true",
+        "options": {}
+      },
+      "id": "77449577-b5b4-48c4-8c04-7007b5ed9551",
+      "name": "Get Weather",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "=The current temperature in Vienna is {{ $json.current_weather.temperature }}°C with windspeed {{ $json.current_weather.windspeed }} km/h."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7733484b-17a7-47d2-adbf-8c89e0b6dba4",
+      "name": "Format Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Manual Trigger \nManual trigger node, workflow can only be operated in test mode. Useful for debugging.\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.manualworkflowtrigger/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        -180
+      ],
+      "id": "92115f1b-bd95-4e66-b7ea-52342dfe1978",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Here you could, for example, forward the weather information by email, send it to a Telegram bot or send it as a Slack / Discord message.",
+        "height": 100,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "d16edd2d-f25b-4c65-a8d0-afb0e75a5948",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## API request \nRead out weather data via the API of open-meteo.com (requires geographical coordinates)\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/)",
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        120,
+        160
+      ],
+      "id": "06214a3d-35b3-42d9-8713-71c703196754",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Weather",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Weather": {
+      "main": [
+        [
+          {
+            "node": "Format Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f5d74057-10a8-495e-9e23-6bd614a1a75c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "PPekzn3H1LvOnGBm",
+  "tags": []
+}
