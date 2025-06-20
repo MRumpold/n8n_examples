@@ -1,4 +1,4 @@
-# Weather Lookup Workflow (n8n)
+# Weather Lookup Workflow
 
 This workflow allows users to request the current weather for a specific city (and optionally country) using OpenStreetMap's geocoding API and Open-Meteo's weather data API.
 
