@@ -1,0 +1,245 @@
+{
+  "name": "Weather API 2",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.open-meteo.com/v1/forecast?latitude={{ $json.lat }}&longitude={{ $json.lon }}&current_weather=true",
+        "options": {}
+      },
+      "id": "77449577-b5b4-48c4-8c04-7007b5ed9551",
+      "name": "Get Weather",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## API request \nGetting the coordinates via the API from openstreetmap.org \n\n[Search](https://nominatim.openstreetmap.org)",
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        40
+      ],
+      "id": "06214a3d-35b3-42d9-8713-71c703196754",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "formTitle": "Get weather for City",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "City",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Country"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -340,
+        -120
+      ],
+      "id": "f876577d-ae9c-4f42-951d-638818430cb3",
+      "name": "On form submission",
+      "webhookId": "26c35392-a89f-4bfc-9afe-e569ea7a684a"
+    },
+    {
+      "parameters": {
+        "url": "=https://nominatim.openstreetmap.org/search?format=json&q={{ $json.City + ($json.Country ? ', ' + $json.Country : '')}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        -120
+      ],
+      "id": "3125a962-56c6-48c2-889a-ec1f33a6aed6",
+      "name": "Get Coordinates",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2dd8bc1a-37d4-4a04-b968-065e6e68f118",
+              "leftValue": "={{ $json.lat }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f20c4e73-3e37-4235-8155-a4543aba4672",
+              "leftValue": "={{ $json.lon }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -120
+      ],
+      "id": "e97ca590-b6c9-45c1-a10b-efdefb1f1941",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "=The current temperature in Vienna is {{ $json.current_weather.temperature }}°C with windspeed {{ $json.current_weather.windspeed }} km/h."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7733484b-17a7-47d2-adbf-8c89e0b6dba4",
+      "name": "Success message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        420,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Ensure that coordinates have been found \n\nCheck whether the condition (could coordinates be found?) is fulfilled. If the condition is met, the objects are sent to the true path. If the condition was not met, they are sent to the false path.\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/)",
+        "height": 220,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -380
+      ],
+      "id": "0dfa1b14-ea7a-4fa7-9c9b-3b0af66d06ca",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "=Sorry, we could not find the weather information for {{ $('On form submission').item.json.City + ($('On form submission').item.json.Country ? ', ' + $json.Country : '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c183dd01-8ff1-4f5e-8999-379886108557",
+      "name": "City not found message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        240,
+        40
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Weather": {
+      "main": [
+        [
+          {
+            "node": "Success message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Get Coordinates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Coordinates": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get Weather",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "City not found message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2bdad1d4-1ad8-49f8-a08f-d234ed892113",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "PPekzn3H1LvOnGBm",
+  "tags": []
+}

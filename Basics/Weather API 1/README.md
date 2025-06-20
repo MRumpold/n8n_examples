@@ -1,4 +1,4 @@
-# Weather Report via Open-Meteo API (n8n)
+# Weather Report via Open-Meteo API
 
 This workflow demonstrates how to retrieve current weather data using the Open-Meteo API and prepare it for messaging or further automation.
 
