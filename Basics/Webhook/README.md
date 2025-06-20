@@ -1,4 +1,4 @@
-# 🔄 Simple Webhook Echo Workflow (n8n)
+# Simple Webhook Echo Workflow
 
 This n8n workflow demonstrates how to:
 - Receive data via a **Webhook Trigger**
@@ -7,7 +7,7 @@ This n8n workflow demonstrates how to:
 
 ---
 
-## 📋 Overview
+## Overview
 
 **Flow:**
 
@@ -17,7 +17,7 @@ This n8n workflow demonstrates how to:
 
 ---
 
-## 🌐 Webhook URL
+## Webhook URL
 
 - In **test mode**, your URL will look like:
   ```
@@ -33,14 +33,12 @@ This n8n workflow demonstrates how to:
 
 ---
 
-## ⚙️ Example Request (PowerShell)
+## Example Request (PowerShell)
 
 To test the workflow locally on Windows using PowerShell:
 
 ```powershell
-curl -X POST http://localhost:5678/webhook-test/hello-webhook `
-     -H "Content-Type: application/json" `
-     -d '{ "name": "Michael" }'
+curl -X POST http://localhost:5678/webhook-test/hello-webhook -H "Content-Type: application/json" -d '{\"name\": \"Michael\" }'
 ```
 
 Or using `Invoke-RestMethod`:
@@ -52,7 +50,7 @@ Invoke-RestMethod -Method POST -Uri "http://localhost:5678/webhook-test/hello-we
 
 ---
 
-## ✅ Expected Response
+## Expected Response
 
 ```json
 {
@@ -64,7 +62,7 @@ Invoke-RestMethod -Method POST -Uri "http://localhost:5678/webhook-test/hello-we
 
 ---
 
-## 📝 Notes
+## Notes
 
 - This workflow is useful to learn:
   - How webhooks work in n8n
@@ -78,7 +76,7 @@ Invoke-RestMethod -Method POST -Uri "http://localhost:5678/webhook-test/hello-we
 
 ---
 
-## 🔗 Related Docs
+## Related Docs
 
 - [Webhook Trigger Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/)
 - [Respond to Webhook Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/)
