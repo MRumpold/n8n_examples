@@ -1,0 +1,546 @@
+{
+  "name": "MQTT Listener",
+  "nodes": [
+    {
+      "parameters": {
+        "topics": "=test/michael/#",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqttTrigger",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -120
+      ],
+      "id": "df16fa4a-b46b-4db8-b966-dffcefcba746",
+      "name": "MQTT Trigger",
+      "credentials": {
+        "mqtt": {
+          "id": "",
+          "name": "MQTT account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "={{ $json.TOPIC_PREFIX }}/Temperature",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e7937c10-7c18-4d10-b2d6-759f6c952435"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "34499c6e-5c05-44fd-a0f4-cf324cad946b",
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "={{ $json.TOPIC_PREFIX }}/Humidity",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5df003d-ee65-4b34-bf18-c236cf8266a0",
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "={{ $json.TOPIC_PREFIX }}/WindSpeed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -180,
+        -140
+      ],
+      "id": "a2c38ed7-58d3-4f26-80d8-dcb9b0ee57a4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appfPAhjY78pfmVcn",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblRTHElk5Q1j5cq5",
+          "mode": "list",
+          "cachedResultName": "Temperature",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn/tblRTHElk5Q1j5cq5"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp and Temperature": "={{ $json.message }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp and Temperature",
+              "displayName": "Timestamp and Temperature",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        -140
+      ],
+      "id": "2f1f29c5-981b-4e0f-ac35-fd4a62b52439",
+      "name": "Temperature Table",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appfPAhjY78pfmVcn",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbltbj0PkYBWCWzjT",
+          "mode": "list",
+          "cachedResultName": "Humidity",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn/tbltbj0PkYBWCWzjT"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp and Humidity": "={{ $json.message }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp and Humidity",
+              "displayName": "Timestamp and Humidity",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        20
+      ],
+      "id": "25958bc1-b648-4eb5-9fd9-e4c1a7e4f815",
+      "name": "Humidity Table",
+      "credentials": {
+        "airtableTokenApi": {
+          "id":"",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appfPAhjY78pfmVcn",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblOIQoF6dQzDo2Hk",
+          "mode": "list",
+          "cachedResultName": "WindSpeed",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn/tblOIQoF6dQzDo2Hk"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp and WindSpeed": "={{ $json.message }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp and WindSpeed",
+              "displayName": "Timestamp and WindSpeed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        180
+      ],
+      "id": "0832d142-dd9b-4333-b8bd-fac7de789f9b",
+      "name": "WindSpeed Table",
+      "credentials": {
+        "airtableTokenApi": {
+          "id":"",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appfPAhjY78pfmVcn",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbldFFewzfupA7DfQ",
+          "mode": "list",
+          "cachedResultName": "MQTT Unknown",
+          "cachedResultUrl": "https://airtable.com/appfPAhjY78pfmVcn/tbldFFewzfupA7DfQ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Message": "={{ $json.message }}",
+            "Topic": "={{ $json.topic }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        340
+      ],
+      "id": "cc54075b-4c48-419d-8ba1-0cd9c45e82c2",
+      "name": "Unknown Topic Table",
+      "credentials": {
+        "airtableTokenApi": {
+          "id":"",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6bdc7081-6fdc-4d6a-8790-a5708ef89401",
+              "name": "TOPIC_PREFIX",
+              "value": "test/michael",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -380,
+        -120
+      ],
+      "id": "e5685a1d-9c2a-4ef5-857b-6837dc2a6b40",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## MQTT trigger (subscribe)\nSubscribes to all MQTT topics that begin with test/michael/, using the wildcard # to include all hierarchical levels.\n(Also `test.mosquitto.org broker`)\n\n[Docs](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.mqtttrigger/)",
+        "height": 220,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        -360
+      ],
+      "id": "aa888c10-fd96-46a6-b2ea-efb3b02980a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Decide storage table \n \nDecide, based on the topic name, in whitch table the received values should be stored.\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.switch/)",
+        "height": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        -360
+      ],
+      "id": "85f31dd4-5b3d-4282-95e7-683671bcb161",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Storing the values \nThe values are each saved in a table in an airtable base.\nValues of unknown topics are saved in the “Unknown Topic Table”. \n\n[Docs](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtable/)",
+        "height": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -360
+      ],
+      "id": "b882e7e1-0fc3-4663-a555-7620c683c93d",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "MQTT Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Temperature Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Humidity Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WindSpeed Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown Topic Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Temperature Table": {
+      "main": [
+        []
+      ]
+    },
+    "Humidity Table": {
+      "main": [
+        []
+      ]
+    },
+    "WindSpeed Table": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "54c1c7c3-225c-48bf-9785-2ad211424887",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "OudJPrC9GWGvDJW5",
+  "tags": []
+}

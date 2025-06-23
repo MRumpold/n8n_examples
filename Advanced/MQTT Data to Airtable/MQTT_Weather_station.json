@@ -1,0 +1,239 @@
+{
+  "name": "MQTT Weather station",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const Temperature = 20 + Math.floor(Math.random() * 10);\nconst Humidity = 20 + Math.floor(Math.random() * 30);\nconst WindSpeed = Math.floor(Math.random() * 50)\n\nreturn {\"TimeStamp\":$input.first().json.timestamp,\n        \"TopicPrefix\":$input.first().json.TOPIC_PREFIX,\n        \"Temperature\": Temperature, \n        \"Humidity\": Humidity,\n        \"WindSpeed\": WindSpeed};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        -40
+      ],
+      "id": "1aa907ad-0e3b-413d-a88f-655a4686f76e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "topic": "={{ $json.TopicPrefix }}/Temperature",
+        "sendInputData": false,
+        "message": "=Current timestamp: {{ $json.TimeStamp }} ; Temperature: {{ $json.Temperature }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqtt",
+      "typeVersion": 1,
+      "position": [
+        120,
+        -40
+      ],
+      "id": "ac215ae4-2264-4eeb-bb95-33429c9ba43b",
+      "name": "Publish Temperature",
+      "credentials": {
+        "mqtt": {
+          "id": "jDwDe4UEOLkPUkIL",
+          "name": "MQTT account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topic": "={{ $json.TopicPrefix }}/Humidity",
+        "sendInputData": false,
+        "message": "=Current timestamp: {{ $json.TimeStamp }} ; Humidity: {{ $json.Humidity }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqtt",
+      "typeVersion": 1,
+      "position": [
+        120,
+        120
+      ],
+      "id": "88a676c2-d7ce-4e98-b1f3-91dec6fe9f6d",
+      "name": "Publish Humidity",
+      "credentials": {
+        "mqtt": {
+          "id": "jDwDe4UEOLkPUkIL",
+          "name": "MQTT account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topic": "={{ $json.TopicPrefix }}/WindSpeed",
+        "sendInputData": false,
+        "message": "=Current timestamp: {{ $json.TimeStamp }} ; WindSpeed: {{ $json.WindSpeed }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqtt",
+      "typeVersion": 1,
+      "position": [
+        120,
+        280
+      ],
+      "id": "010f5706-7ade-4449-a059-326c1ec29874",
+      "name": "Publish WindSpeed",
+      "credentials": {
+        "mqtt": {
+          "id": "jDwDe4UEOLkPUkIL",
+          "name": "MQTT account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -720,
+        -40
+      ],
+      "id": "4dae1050-bac2-4be7-9095-0b3016b1b0a1",
+      "name": "Trigger every 10s"
+    },
+    {
+      "parameters": {
+        "content": "## Create Dummy data \nCode node to create dummy data for temperature, humidity and wind speed.\n\n[Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/)",
+        "height": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -240
+      ],
+      "id": "45b402d4-9e44-4b2a-aa6d-33ae2b212213",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## MQTT publish \nPublish the weather values to the MQTT broker \nHost = `test.mosquitto.org`\nPort: 1883\nohne Authentifizierung\n\n[mosquitto](https://test.mosquitto.org/)\n\n\n[Docs](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mqtt/)",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        20,
+        -300
+      ],
+      "id": "4df23986-b951-4bd5-9fc2-70c39e4d4281",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "25b25944-6a23-4704-b59a-5f663a3b1ba0",
+              "name": "TOPIC_PREFIX",
+              "value": "=test/michael",
+              "type": "string"
+            },
+            {
+              "id": "17f9fe0c-7572-46c7-95bb-7abfe19d515b",
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        -40
+      ],
+      "id": "657e127f-1dd7-460b-aec2-d9ede6143d7a",
+      "name": "Remove unnecessary data, add TOPIC_PREFIX"
+    },
+    {
+      "parameters": {
+        "content": "TOPIC_PREFIX is added as a value; if the topic name is changed later, this only needs to be done once here.",
+        "height": 100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -160
+      ],
+      "id": "76974501-d318-432b-b129-290bccd98454",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Publish Humidity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Publish WindSpeed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Publish Temperature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger every 10s": {
+      "main": [
+        [
+          {
+            "node": "Remove unnecessary data, add TOPIC_PREFIX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Temperature": {
+      "main": [
+        []
+      ]
+    },
+    "Remove unnecessary data, add TOPIC_PREFIX": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Vienna",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "47af4856-bf8d-4709-a2fc-503b2693827c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "AoTZOcQYGpFAn1gT",
+  "tags": []
+}
