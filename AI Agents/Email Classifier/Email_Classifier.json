@@ -1,0 +1,307 @@
+{
+  "name": "Email Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "fromEmail": "={{ $json.from }}",
+        "toEmail": "={{ $json.targetEmail }}",
+        "subject": "={{$json[\"subject\"]}}",
+        "text": "={{ $json.textPlain }}",
+        "html": "={{ $json.textHtml }}",
+        "attachments": "={{Object.keys($binary).join(',')}}",
+        "options": {}
+      },
+      "id": "53bdfc46-f04f-422b-9fb4-eeb8c8477d61",
+      "name": "Send Email (SMTP)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -100
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "8BTdXq3Cr1gujJDi",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "downloadAttachments": true,
+        "options": {}
+      },
+      "id": "bfeb64f4-ecb5-4ec3-a18d-5b655423ff62",
+      "name": "IMAP Email",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -120
+      ],
+      "credentials": {
+        "imap": {
+          "id": "Z3gpew0YwYvCbNEa",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email classifier. You classify emails into the following categories:\nSpam, AppointmentRequest, Invoice, RequestForQuotation and NotAssignable\nIf you are not sure which category the mail corresponds to, assign it to the NotAssignable category. The received mail was sent from {{ $json.from }} and has as subject: {{ $json.subject }}. The message content is as follows: {{ $json.textPlain }}\n\nPlease answer only with the assigned category",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        280,
+        0
+      ],
+      "id": "ee47132c-ef73-4686-a07a-8407a7ac5710",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        220
+      ],
+      "id": "cf0f7fcb-0bca-4779-8f5a-a1c36557417d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GXvpDNhoPNkPge8m",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"MailClassification\": [ \"Spam\", \"AppointmentRequest\", \"Invoice\", \"RequestForQuotation\", \"NotAssignable\" ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        220
+      ],
+      "id": "9c6ba042-30ad-4ab1-8c68-728a2d7391fe",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        880,
+        -100
+      ],
+      "id": "44cf4b26-40ee-472c-871e-056ed7ce721b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58b43b53-977d-4c16-a880-14519a16582c",
+              "name": "MailClassification",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ],
+      "id": "6d030bb8-92e7-4d60-b0cd-a7873b00e461",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const MailClassification = $input.first().json.MailClassification;\n\n// Mapping for recipients (Please adjust the values in capital letters.)\nconst TargetServer = 'YOURMAILSERVER.COM';\nconst config = {\n  Spam: {\n    targetEmail: 'SPAM',\n  },\n  AppointmentRequest: {\n    targetEmail: 'APPOINTMENTS',\n  },\n  Invoice: {\n    targetEmail: 'INVOICE',\n  },\n  RequestForQuotation: {\n    targetEmail: 'RFQ',\n  }\n}\n\nconst target = config[MailClassification] || {\n  targetEmail: 'NOTASSIGNABLE',\n};\n\n// return json object and binary (attachements)\nreturn [\n  {\n    json: {\n      ...$input.first().json,\n      targetEmail: target.targetEmail + '@' + TargetServer,\n    },\n    binary: {\n      ...$input.first().binary\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        -100
+      ],
+      "id": "8f07be85-a6ff-4597-9f20-61fb046eecb9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "Trigger when a new email arrives.\nMails are marked as read in the inbox folder.",
+        "height": 100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -240
+      ],
+      "id": "28d23236-7d99-4fd0-aee9-ad90544724cc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "AI agent which categorizes the mail based on the sender, subject and message content.\nCategories:\n- Spam\n- AppointmentRequest\n- Invoice\n- RequestForQuotation\n- NotAssignable",
+        "height": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        300,
+        -320
+      ],
+      "id": "8f5dc2ab-8f69-4d6c-9d2b-e0118573ee84",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Merge the mail content with the categorization",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        60
+      ],
+      "id": "8b1889c1-205a-45de-937a-bd4f40fc581e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Assign the recipient according to the category and send.",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -200
+      ],
+      "id": "50851033-f6af-4ffc-9d0d-03a4b01f65c1",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "IMAP Email": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send Email (SMTP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9f0e11af-105b-4298-9c0d-54518040e8dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "30bc9b663364cd511466182851458bd43569483f702fcc3b9abb082e634c58db"
+  },
+  "id": "CfpgiwgcCxJuf1Qx",
+  "tags": []
+}
